@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 
 import com.rowland.photomist.R;
 import com.rowland.photomist.ui.views.CameraPreviewSurfaceView;
@@ -23,7 +26,7 @@ public class PhotoFragment extends Fragment {
     private Camera mCamera;
     // Total hardware cameras
     private int mNumberOfCameras;
-    // The Camera in use
+    // The default camera in use
     private int mCameraCurrentlyLocked;
     // The first back facing camera
     private int defaultBackFacingCameraId;
@@ -33,13 +36,28 @@ public class PhotoFragment extends Fragment {
     // The surface view
     @Bind(R.id.camera_preview_surfaceview)
     CameraPreviewSurfaceView mPreviewSurface;
-    // Button to toggle flash
-    //@Bind(R.id.permissions_button_view)
-    Button mToggleFlashButton;
-    // Button to toggle camera
-    //@Bind(R.id.permissions_button_view)
-    Button mToggleCameraButton;
 
+    // RadioGroup for settings
+    @Bind(R.id.photo_settings_group)
+    RadioGroup mSettingsRadioGroup;
+
+    private void toggleCamera(int cameraId) {
+        // Set chosen camera
+        mCameraCurrentlyLocked = cameraId;
+        mPreviewSurface.surfaceDestroyed(mPreviewSurface.getHolder());
+
+        RelativeLayout previewParent = (RelativeLayout) getActivity().findViewById(R.id.preview_container);
+        previewParent.removeView(mPreviewSurface);
+
+        mPreviewSurface = new CameraPreviewSurfaceView(getActivity());
+        mPreviewSurface.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        previewParent.addView(mPreviewSurface, 0);
+
+        // Open the default back facing camera.
+        mCamera = Camera.open(mCameraCurrentlyLocked);
+        // Set the camera to use
+        mPreviewSurface.setCamera(mCamera);
+    }
 
     public PhotoFragment() {
         // Required empty public constructor
@@ -60,10 +78,6 @@ public class PhotoFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
-
         // Find the total number of cameras available
         mNumberOfCameras = Camera.getNumberOfCameras();
         // Find the ID of the default camera
@@ -94,12 +108,34 @@ public class PhotoFragment extends Fragment {
     }
 
     @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mSettingsRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.capture_mode_camera_flash:
+                        mPreviewSurface.toggleCameraFlash();
+                        break;
+                    case R.id.capture_mode_back_camera:
+                        toggleCamera(defaultBackFacingCameraId);
+                        break;
+                    case R.id.capture_mode_front_camera:
+                        toggleCamera(defaultFrontFacingCameraId);
+
+                }
+            }
+        });
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         // ToDo: In future include feature for switching cameras
         mCameraCurrentlyLocked = defaultBackFacingCameraId;
         // Open the default back facing camera.
-        mCamera = Camera.open();
+        mCamera = Camera.open(mCameraCurrentlyLocked);
         // Set the camera to use
         mPreviewSurface.setCamera(mCamera);
     }

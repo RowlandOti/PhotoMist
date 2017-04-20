@@ -8,7 +8,11 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import com.rowland.photomist.utilities.CameraUtility;
 import com.rowland.photomist.utilities.DeviceUtility;
@@ -137,6 +141,12 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
         // Surface will be destroyed when we return, so stop the preview.
         if (mCamera != null) {
             mCamera.stopPreview();
+            mCamera.release();
+
+            mHolder.removeCallback(this);
+            destroyDrawingCache();
+
+            mCamera = null;
         }
     }
 
@@ -177,32 +187,31 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
         if (mCamera != null) {
             mSupportedPreviewSizes = mCamera.getParameters().getSupportedPreviewSizes();
             mSupportedPictureSizes = mCamera.getParameters().getSupportedPictureSizes();
-            setFlash(camera, true);
+            toggleCameraFlash();
             requestLayout();
         }
     }
 
-    public void setFlash(Camera camera, boolean isTorchOn) {
+    public void toggleCameraFlash() {
         // Check for flash in Camera
-        if (CameraUtility.isFlashSupported(camera)) {
+        if (CameraUtility.isFlashSupported(mCamera)) {
             // Acquire Camera parameters
-            Camera.Parameters parameters = camera.getParameters();
-            // We want flash
-            if (isTorchOn) {
-                // Already in torch mode
-                if (parameters.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
-                    return;
-                }
-                // Set flash to torch mode
-                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-            } else {
-                // Already out of flash mode
-                if (parameters.getFlashMode().equals(Camera.Parameters.FLASH_MODE_OFF)) {
-                    return;
-                }
-                // Set flash off
+            Camera.Parameters parameters = mCamera.getParameters();
+            // What flash mode are we in
+            String flashMode = mCamera.getParameters().getFlashMode();
+            if (flashMode == Camera.Parameters.FLASH_MODE_OFF) {
+                // Enable Flash
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
+            } else if(flashMode == Camera.Parameters.FLASH_MODE_ON) {
+                // Disable Flash
                 parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
             }
+            else {
+                // Disable Flash
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+            }
+
+            // Apply the changes
             mCamera.setParameters(parameters);
         }
     }

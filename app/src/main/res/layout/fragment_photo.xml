@@ -31,7 +31,7 @@
         android:orientation="vertical">
 
         <RadioGroup
-            android:id="@+id/capture_mode_group"
+            android:id="@+id/photo_settings_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
