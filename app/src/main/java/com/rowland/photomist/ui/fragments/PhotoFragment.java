@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
@@ -36,6 +37,9 @@ public class PhotoFragment extends Fragment {
     // The surface view
     @Bind(R.id.camera_preview_surfaceview)
     CameraPreviewSurfaceView mPreviewSurface;
+    // ImageView to take photo
+    @Bind(R.id.photo_settings_group)
+    ImageView mTakePhotoIImageView;
 
     // RadioGroup for settings
     @Bind(R.id.photo_settings_group)
@@ -125,6 +129,13 @@ public class PhotoFragment extends Fragment {
                         toggleCamera(defaultFrontFacingCameraId);
 
                 }
+            }
+        });
+
+        mTakePhotoIImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCamera.takePicture();
             }
         });
     }
