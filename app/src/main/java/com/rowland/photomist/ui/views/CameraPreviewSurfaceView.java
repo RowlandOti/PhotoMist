@@ -31,7 +31,6 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
     private SurfaceView mSurfaceView;
     private SurfaceHolder mHolder;
 
-    private Camera.PreviewCallback previewCallback;
     private Camera.AutoFocusCallback autoFocusCallback;
     private Camera mCamera;
     private Camera.Size mPreviewSize;
@@ -120,6 +119,7 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
             // Take care of events such as rotation
             fixOrientation(parameters);
             // Set some camera parameters
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
             parameters.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
             parameters.setPictureSize(mPictureSize.width, mPictureSize.height);
 
@@ -127,9 +127,7 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
             if (mCamera != null) {
                 // Set the parameters on the camera and start the preview
                 mCamera.setParameters(parameters);
-                mCamera.setPreviewCallback(previewCallback);
                 mCamera.startPreview();
-                mCamera.autoFocus(autoFocusCallback);
             }
         } catch (Exception exception) {
             Log.d(LOG_TAG, "Error starting camera preview: " + exception.getMessage());
@@ -216,11 +214,8 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
         }
     }
 
-    public void setPreviewCallback(Camera.PreviewCallback previewCallback) {
-        this.previewCallback = previewCallback;
-    }
-
     public void setAutoFocusCallback(Camera.AutoFocusCallback autoFocusCallback) {
         this.autoFocusCallback = autoFocusCallback;
+        mCamera.autoFocus(autoFocusCallback);
     }
 }

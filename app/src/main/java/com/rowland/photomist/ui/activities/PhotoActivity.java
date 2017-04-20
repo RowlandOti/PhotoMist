@@ -27,7 +27,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class PhotoActivity extends BaseToolBarActivity {
+public class PhotoActivity extends BaseToolBarActivity implements PhotoFragment.PhotoTakeCompleteCallBack {
 
     // Logging Identifier for class
     private final String LOG_TAG = PhotoActivity.class.getSimpleName();
@@ -164,5 +164,10 @@ public class PhotoActivity extends BaseToolBarActivity {
         ft.replace(R.id.fragment_container, photoFragment);
         // Known bug with commit(), see - <a>http://stackoverflow.com/a/10261438/1464571</a>
         ft.commitAllowingStateLoss();
+    }
+
+    @Override
+    public void onPhotoTakeComplete() {
+        mBeepManager.playBeepSoundAndVibrate();
     }
 }

@@ -13,6 +13,7 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
 import com.rowland.photomist.R;
+import com.rowland.photomist.camera.CameraHandlerThread;
 import com.rowland.photomist.ui.views.CameraPreviewSurfaceView;
 
 import butterknife.Bind;
@@ -33,34 +34,43 @@ public class PhotoFragment extends Fragment {
     private int defaultBackFacingCameraId;
     // The first front facing camera
     private int defaultFrontFacingCameraId;
+    // Useful handler
+    private CameraHandlerThread mCameraHandlerThread = null;
 
     // The surface view
     @Bind(R.id.camera_preview_surfaceview)
     CameraPreviewSurfaceView mPreviewSurface;
     // ImageView to take photo
-    @Bind(R.id.photo_settings_group)
+    @Bind(R.id.camera_picture_take)
     ImageView mTakePhotoIImageView;
-
     // RadioGroup for settings
     @Bind(R.id.photo_settings_group)
     RadioGroup mSettingsRadioGroup;
 
+    // A callback interface that all containing activities implement
+    public interface PhotoTakeCompleteCallBack {
+        // Call this when complete.
+        void onPhotoTakeComplete();
+    }
+
     private void toggleCamera(int cameraId) {
-        // Set chosen camera
-        mCameraCurrentlyLocked = cameraId;
-        mPreviewSurface.surfaceDestroyed(mPreviewSurface.getHolder());
+        if (cameraId != mCameraCurrentlyLocked) {
+            // Set chosen camera
+            mCameraCurrentlyLocked = cameraId;
+            mPreviewSurface.surfaceDestroyed(mPreviewSurface.getHolder());
 
-        RelativeLayout previewParent = (RelativeLayout) getActivity().findViewById(R.id.preview_container);
-        previewParent.removeView(mPreviewSurface);
+            RelativeLayout previewParent = (RelativeLayout) getActivity().findViewById(R.id.preview_container);
+            previewParent.removeView(mPreviewSurface);
 
-        mPreviewSurface = new CameraPreviewSurfaceView(getActivity());
-        mPreviewSurface.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        previewParent.addView(mPreviewSurface, 0);
+            mPreviewSurface = new CameraPreviewSurfaceView(getActivity());
+            mPreviewSurface.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            previewParent.addView(mPreviewSurface, 0);
 
-        // Open the default back facing camera.
-        mCamera = Camera.open(mCameraCurrentlyLocked);
-        // Set the camera to use
-        mPreviewSurface.setCamera(mCamera);
+            // Open the default back facing camera.
+            mCamera = Camera.open(mCameraCurrentlyLocked);
+            // Set the camera to use
+            mPreviewSurface.setCamera(mCamera);
+        }
     }
 
     public PhotoFragment() {
@@ -135,7 +145,10 @@ public class PhotoFragment extends Fragment {
         mTakePhotoIImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCamera.takePicture();
+                if (mCameraHandlerThread == null) {
+                    mCameraHandlerThread = new CameraHandlerThread(PhotoFragment.this);
+                }
+                mCameraHandlerThread.initializePhotoTaking();
             }
         });
     }
@@ -163,5 +176,9 @@ public class PhotoFragment extends Fragment {
             mCamera.release();
             mCamera = null;
         }
+    }
+
+    public CameraPreviewSurfaceView getPreviewSurface() {
+        return mPreviewSurface;
     }
 }
