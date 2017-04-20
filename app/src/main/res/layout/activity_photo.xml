@@ -19,9 +19,9 @@
         layout="@layout/inc_transparent_toolbar" />
 
     <include
-        android:id="@+id/empty_text_view_container"
+        android:id="@+id/permissions_rationale_container"
         android:visibility="gone"
-        layout="@layout/inc_empty_textview" />
+        layout="@layout/inc_permissions_rationale_view" />
 
 </RelativeLayout>
 

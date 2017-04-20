@@ -19,16 +19,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical">
+
+    <Button
+        android:id="@+id/permissions_button_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Give Permissions"></Button>
 
     <!-- Empty TextView-->
     <TextView
-        android:id="@+id/empty_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
+        android:id="@+id/permissions_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-condensed"
         android:padding="@dimen/empty_text_viewPadding"
-        tools:text="All permissions are needed to run app.">
+        android:text="All permissions are needed to run app."
+        android:textSize="20sp">
 
     </TextView>
 

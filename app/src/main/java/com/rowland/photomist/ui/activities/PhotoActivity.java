@@ -2,11 +2,13 @@ package com.rowland.photomist.ui.activities;
 
 import android.Manifest;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.karumi.dexter.Dexter;
@@ -29,10 +31,20 @@ public class PhotoActivity extends BaseToolBarActivity {
 
     // Logging Identifier for class
     private final String LOG_TAG = PhotoActivity.class.getSimpleName();
+
     // ButterKnife injected views
-    // The surface view containing layout
+    // The View to display if permissions are denied
+    @Bind(R.id.fragment_container)
+    FrameLayout mFragmentView;
+    @Bind(R.id.permissions_button_view)
+    Button mPermsButtonRetryView;
+    // The View to display if permissions are denied
+    @Bind(R.id.permissions_rationale_container)
+    LinearLayout mPermsRationaleView;
+    // Not needed, but we will use a transparent Toolbar to keep thinhs simple
     @Bind(R.id.transparent_toolbar)
     Toolbar mTransparentToolBar;
+
     // Media use
     private BeepManager mBeepManager;
 
@@ -46,20 +58,21 @@ public class PhotoActivity extends BaseToolBarActivity {
         setToolbar(mTransparentToolBar, false, false, 0);
         setToolbarTransparent(true);
 
-        // Check that the activity is using the layout with the fragment_container id
-        if (findViewById(R.id.fragment_container) != null) {
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
-            if (savedInstanceState != null) {
-                return;
-            }
-            // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
-            else {
+        // Restoration from a previous state, just return
+        if (savedInstanceState != null) {
+            return;
+        }
+        // Check for App permissions
+        else {
+            checkPermissions();
+        }
+
+        mPermsButtonRetryView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 checkPermissions();
             }
-        }
+        });
     }
 
     private void checkPermissions() {
@@ -74,9 +87,11 @@ public class PhotoActivity extends BaseToolBarActivity {
             public void onPermissionsChecked(MultiplePermissionsReport report) {
                 //
                 if (report.areAllPermissionsGranted()) {
+                    showPermissionRetry(false);
                     // Pass bundle to the fragment
                     showPhotoFragment(null);
                 } else {
+                    showPermissionRetry(true);
                     for (PermissionDeniedResponse response : report.getDeniedPermissionResponses()) {
                         showPermissionDenied(response.getPermissionName(), response.isPermanentlyDenied());
                     }
@@ -92,17 +107,30 @@ public class PhotoActivity extends BaseToolBarActivity {
     }
 
     private void showPermissionRationale(PermissionToken token) {
-
+        token.continuePermissionRequest();
+        showPermissionRetry(true);
     }
 
     private void showPermissionDenied(String permissionName, boolean permanentlyDenied) {
         Toast.makeText(this, permissionName + " is needed to function properly", Toast.LENGTH_SHORT).show();
     }
 
+    private void showPermissionRetry(boolean isShowRetry) {
+        if (isShowRetry) {
+            // Permissions given, toggle visibility off
+            mPermsRationaleView.setVisibility(View.VISIBLE);
+            mFragmentView.setVisibility(View.GONE);
+        } else {
+            // Permissions given, toggle visibility off
+            mPermsRationaleView.setVisibility(View.GONE);
+            mFragmentView.setVisibility(View.VISIBLE);
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        // Initialize the beepmanager
+        // Initialize the beep manager
         mBeepManager = new BeepManager(this);
     }
 
