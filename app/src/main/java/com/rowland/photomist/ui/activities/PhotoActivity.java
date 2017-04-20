@@ -33,9 +33,10 @@ public class PhotoActivity extends BaseToolBarActivity {
     private final String LOG_TAG = PhotoActivity.class.getSimpleName();
 
     // ButterKnife injected views
-    // The View to display if permissions are denied
+    // View to display if permissions are denied
     @Bind(R.id.fragment_container)
-    FrameLayout mFragmentView;
+    FrameLayout mPhotoFragmentView;
+    // Button to retry permissions
     @Bind(R.id.permissions_button_view)
     Button mPermsButtonRetryView;
     // The View to display if permissions are denied
@@ -88,7 +89,7 @@ public class PhotoActivity extends BaseToolBarActivity {
                 //
                 if (report.areAllPermissionsGranted()) {
                     showPermissionRetry(false);
-                    // Pass bundle to the fragment
+                    // Show the photo Fragment withSurfaceView
                     showPhotoFragment(null);
                 } else {
                     showPermissionRetry(true);
@@ -119,11 +120,11 @@ public class PhotoActivity extends BaseToolBarActivity {
         if (isShowRetry) {
             // Permissions given, toggle visibility off
             mPermsRationaleView.setVisibility(View.VISIBLE);
-            mFragmentView.setVisibility(View.GONE);
+            mPhotoFragmentView.setVisibility(View.GONE);
         } else {
             // Permissions given, toggle visibility off
             mPermsRationaleView.setVisibility(View.GONE);
-            mFragmentView.setVisibility(View.VISIBLE);
+            mPhotoFragmentView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -161,6 +162,7 @@ public class PhotoActivity extends BaseToolBarActivity {
         FragmentTransaction ft = fm.beginTransaction();
         // Prefer replace() over add() see <a>https://github.com/RowlandOti/PopularMovies/issues/1</a>
         ft.replace(R.id.fragment_container, photoFragment);
-        ft.commit();
+        // Known bug with commit(), see - <a>http://stackoverflow.com/a/10261438/1464571</a>
+        ft.commitAllowingStateLoss();
     }
 }

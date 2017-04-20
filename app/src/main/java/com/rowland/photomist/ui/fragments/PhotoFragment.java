@@ -95,9 +95,6 @@ public class PhotoFragment extends Fragment {
         openCameraNew();
         // Set the camera to use
         mPreviewSurface.setCamera(mCamera);
-        /*if (mPreviewSurface.getParent() == null) {
-            mPreviewContainer.addView(mPreviewSurface);
-        }*/
     }
 
     // Called when the fragment is no longer resumed
@@ -111,7 +108,6 @@ public class PhotoFragment extends Fragment {
             mCamera.setPreviewCallback(null);
             mCamera.release();
             mCamera = null;
-            //mPreviewContainer.removeView(mPreviewSurface);
         }
     }
 
