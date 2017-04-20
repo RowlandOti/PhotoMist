@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-condensed"
-        android:padding="@dimen/empty_text_viewPadding"
+        android:padding="@dimen/permissions_text_viewPadding"
         android:text="All permissions are needed to run app."
         android:textSize="20sp">
 

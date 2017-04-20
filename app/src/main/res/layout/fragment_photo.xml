@@ -24,106 +24,67 @@
 
     </LinearLayout>
 
-
-    <ImageView
-        android:id="@+id/capture_mask_left"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@id/camera_hover_view_container"
-        android:background="@color/mask_light_teal" />
-
-    <ImageView
-        android:id="@+id/capture_mask_top"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/camera_hover_view_container"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@id/capture_mask_left"
-        android:background="@color/mask_light_teal" />
-
-    <ImageView
-        android:id="@+id/capture_mask_right"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/capture_mask_top"
-        android:layout_toRightOf="@id/camera_hover_view_container"
-        android:background="@color/mask_light_teal" />
-
-    <ImageView
-        android:id="@+id/capture_mask_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@id/camera_hover_view_container"
-        android:layout_toLeftOf="@id/capture_mask_right"
-        android:layout_toRightOf="@id/capture_mask_left"
-        android:background="@color/mask_light_teal" />
-
-    <TextView
-        android:id="@+id/capture_scan_tips"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/camera_hover_view_container"
-        android:gravity="center"
-        android:padding="20dp"
-        android:text="Choose the Camera Type"
-        android:textColor="@android:color/white"
-        android:textSize="16sp" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
+        <RadioGroup
+            android:id="@+id/capture_mode_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="25dp"
+            android:paddingBottom="20dp">
+
+            <RadioButton
+                android:id="@+id/capture_mode_front_camera"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/apptheme_transparent"
+                android:button="@null"
+                android:checked="true"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/camera_front_selector"
+                android:gravity="center"
+                android:text="Front Camera"
+                android:textColor="@color/apptheme_white"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:id="@+id/capture_mode_back_camera"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/apptheme_transparent"
+                android:button="@null"
+                android:checked="false"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/camera_back_selector"
+                android:gravity="center"
+                android:text="Back Camera"
+                android:textColor="@color/apptheme_white"
+                android:textSize="15sp" />
+
+            <RadioButton
+                android:id="@+id/capture_mode_camera_flash"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/apptheme_transparent"
+                android:button="@null"
+                android:checked="true"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/camera_flash"
+                android:gravity="center"
+                android:text="Camera Flash"
+                android:textColor="@color/apptheme_white"
+                android:textSize="15sp" />
+
+        </RadioGroup>
     </LinearLayout>
-
-    <RadioGroup
-        android:id="@+id/capture_mode_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingBottom="20dp">
-
-        <RadioButton
-            android:id="@+id/capture_mode_qrcode"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/apptheme_transparent"
-            android:button="@null"
-            android:checked="true"
-            android:drawablePadding="5dp"
-            android:drawableTop="@drawable/qrcode_selector"
-            android:gravity="center"
-            android:text="Front Camera"
-            android:textColor="@color/apptheme_white"
-            android:textSize="15sp" />
-
-        <RadioButton
-            android:id="@+id/capture_mode_barcode"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/apptheme_transparent"
-            android:button="@null"
-            android:checked="false"
-            android:drawablePadding="5dp"
-            android:drawableTop="@drawable/barcode_selector"
-            android:gravity="center"
-            android:text="Back Camera"
-            android:textColor="@color/apptheme_white"
-            android:textSize="15sp" />
-    </RadioGroup>
-
 </RelativeLayout>
 

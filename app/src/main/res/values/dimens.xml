@@ -5,5 +5,5 @@
 
     <dimen name="barcode_crop_width">260dp</dimen>
     <dimen name="barcode_crop_height">140dp</dimen>
-    <dimen name="empty_text_viewPadding">16dp</dimen>
+    <dimen name="permissions_text_viewPadding">16dp</dimen>
 </resources>

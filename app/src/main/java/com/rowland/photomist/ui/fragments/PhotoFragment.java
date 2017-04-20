@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.rowland.photomist.R;
 import com.rowland.photomist.ui.views.CameraPreviewSurfaceView;
@@ -32,6 +33,13 @@ public class PhotoFragment extends Fragment {
     // The surface view
     @Bind(R.id.camera_preview_surfaceview)
     CameraPreviewSurfaceView mPreviewSurface;
+    // Button to toggle flash
+    //@Bind(R.id.permissions_button_view)
+    Button mToggleFlashButton;
+    // Button to toggle camera
+    //@Bind(R.id.permissions_button_view)
+    Button mToggleCameraButton;
+
 
     public PhotoFragment() {
         // Required empty public constructor
@@ -41,7 +49,6 @@ public class PhotoFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param Bundle args.
      * @return A new instance of fragment PhotoFragment.
      */
     public static PhotoFragment newInstance(Bundle args) {
@@ -92,7 +99,7 @@ public class PhotoFragment extends Fragment {
         // ToDo: In future include feature for switching cameras
         mCameraCurrentlyLocked = defaultBackFacingCameraId;
         // Open the default back facing camera.
-        openCameraNew();
+        mCamera = Camera.open();
         // Set the camera to use
         mPreviewSurface.setCamera(mCamera);
     }
@@ -110,9 +117,4 @@ public class PhotoFragment extends Fragment {
             mCamera = null;
         }
     }
-
-    public void openCameraNew() {
-        mCamera = Camera.open();
-    }
-
 }

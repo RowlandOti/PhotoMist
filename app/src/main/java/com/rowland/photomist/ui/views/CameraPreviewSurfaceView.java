@@ -73,39 +73,9 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
         final int height = resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
         setMeasuredDimension(width, height);
         if (mSupportedPreviewSizes != null) {
-            mPreviewSize = getOptimalPreviewSize(mSupportedPreviewSizes, width, height);
-            mPictureSize = getOptimalPreviewSize(mSupportedPictureSizes, width, height);
+            mPreviewSize = CameraUtility.getOptimalPreviewSize(mSupportedPreviewSizes, width, height);
+            mPictureSize = CameraUtility.getOptimalPreviewSize(mSupportedPictureSizes, width, height);
         }
-    }
-
-    // A handy method that returns the most reasonable preview size
-    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
-        final double ASPECT_TOLERANCE = 0.1;
-        double targetRatio = (double) w / h;
-        if (sizes == null) return null;
-        Camera.Size optimalSize = null;
-        double minDiff = Double.MAX_VALUE;
-        int targetHeight = h;
-        // Try to find an size match aspect ratio and size
-        for (Camera.Size size : sizes) {
-            double ratio = (double) size.width / size.height;
-            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
-            if (Math.abs(size.height - targetHeight) < minDiff) {
-                optimalSize = size;
-                minDiff = Math.abs(size.height - targetHeight);
-            }
-        }
-        // Cannot find the one match the aspect ratio, ignore the requirement
-        if (optimalSize == null) {
-            minDiff = Double.MAX_VALUE;
-            for (Camera.Size size : sizes) {
-                if (Math.abs(size.height - targetHeight) < minDiff) {
-                    optimalSize = size;
-                    minDiff = Math.abs(size.height - targetHeight);
-                }
-            }
-        }
-        return optimalSize;
     }
 
 
@@ -160,8 +130,6 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
         } catch (Exception exception) {
             Log.d(LOG_TAG, "Error starting camera preview: " + exception.getMessage());
         }
-
-        Log.d(LOG_TAG, "We were called");
     }
 
     @Override
@@ -176,34 +144,28 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
     private void fixOrientation(Camera.Parameters parameters) {
         // Acquire a Display object
         Display display = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        // We are not gona run these in the emulator
-        if (!DeviceUtility.isRunningOnEmulator()) {
-            // The preview is rotated on devices, so we have to straighten it.
-            // We do not need to do this in an emulator
-            if (display.getRotation() == Surface.ROTATION_0) {
-                //parameters.setPreviewSize(mPreviewSize.height, mPreviewSize.width);
-                mOrientation = 90;
-                mCamera.setDisplayOrientation(mOrientation);
-            }
 
-            if (display.getRotation() == Surface.ROTATION_90) {
-                //parameters.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
-                mOrientation = 0;
-                mCamera.setDisplayOrientation(mOrientation);
-            }
-
-            if (display.getRotation() == Surface.ROTATION_180) {
-                //parameters.setPreviewSize(mPreviewSize.height, mPreviewSize.width);
-                mOrientation = 0;
-                mCamera.setDisplayOrientation(mOrientation);
-            }
-
-            if (display.getRotation() == Surface.ROTATION_270) {
-                //parameters.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
-                mOrientation = 180;
-                mCamera.setDisplayOrientation(mOrientation);
-            }
+        // The preview is rotated on devices, so we have to straighten it.
+        if (display.getRotation() == Surface.ROTATION_0) {
+            mOrientation = 90;
+            mCamera.setDisplayOrientation(mOrientation);
         }
+
+        if (display.getRotation() == Surface.ROTATION_90) {
+            mOrientation = 0;
+            mCamera.setDisplayOrientation(mOrientation);
+        }
+
+        if (display.getRotation() == Surface.ROTATION_180) {
+            mOrientation = 0;
+            mCamera.setDisplayOrientation(mOrientation);
+        }
+
+        if (display.getRotation() == Surface.ROTATION_270) {
+            mOrientation = 180;
+            mCamera.setDisplayOrientation(mOrientation);
+        }
+
         if (parameters.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
             parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
         }
@@ -220,13 +182,13 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
         }
     }
 
-    public void setFlash(Camera camera, boolean flag) {
+    public void setFlash(Camera camera, boolean isTorchOn) {
         // Check for flash in Camera
         if (CameraUtility.isFlashSupported(camera)) {
             // Acquire Camera parameters
             Camera.Parameters parameters = camera.getParameters();
             // We want flash
-            if (flag) {
+            if (isTorchOn) {
                 // Already in torch mode
                 if (parameters.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
                     return;
