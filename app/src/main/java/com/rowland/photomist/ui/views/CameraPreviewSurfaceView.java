@@ -70,8 +70,9 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        // We purposely disregard child measurements because act as a wrapper to a SurfaceView
-        // that centers the camera preview instead of stretching it.
+        // We purposely disregard child measurements because act as a
+        // wrapper to a SurfaceView that centers the camera preview instead
+        // of stretching it.
         final int width = resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
         final int height = resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
         setMeasuredDimension(width, height);
@@ -120,6 +121,12 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
             // Take care of events such as rotation
             fixOrientation(parameters);
             // Set some camera parameters
+            if(CameraUtility.isAutoFocusSupported(mCamera)) {
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+            }
+            if(CameraUtility.isFlashSupported(mCamera)) {
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+            }
             parameters.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
             parameters.setPictureSize(mPictureSize.width, mPictureSize.height);
 

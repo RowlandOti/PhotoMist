@@ -31,6 +31,12 @@ public class CameraUtility {
         return true;
     }
 
+    public static boolean isAutoFocusSupported(Camera camera) {
+        List<String> supportedFocusModes = camera.getParameters().getSupportedFocusModes();
+        boolean hasAutoFocus = supportedFocusModes != null && supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO);
+        return hasAutoFocus;
+    }
+
     // A handy method that returns the most reasonable preview size
     public static  Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
         final double ASPECT_TOLERANCE = 0.1;
