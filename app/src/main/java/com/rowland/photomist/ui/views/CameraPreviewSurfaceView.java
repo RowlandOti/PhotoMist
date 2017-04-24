@@ -125,7 +125,7 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
                 parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
             }
             if(CameraUtility.isFlashSupported(mCamera)) {
-                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
             }
             parameters.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
             parameters.setPictureSize(mPictureSize.width, mPictureSize.height);
@@ -213,10 +213,9 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
                 // Disable Flash
                 parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
             } else {
-                // Disable Flash
-                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                // Auto Flash
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
             }
-
             // Apply the changes
             mCamera.setParameters(parameters);
         }
