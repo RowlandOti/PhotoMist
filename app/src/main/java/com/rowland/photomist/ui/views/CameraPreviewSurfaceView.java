@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
+import com.rowland.photomist.camera.CameraHandlerThread;
 import com.rowland.photomist.utilities.CameraUtility;
 import com.rowland.photomist.utilities.DeviceUtility;
 
@@ -31,13 +32,13 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
     private SurfaceView mSurfaceView;
     private SurfaceHolder mHolder;
 
-    private Camera.AutoFocusCallback autoFocusCallback;
     private Camera mCamera;
     private Camera.Size mPreviewSize;
     private Camera.Size mPictureSize;
     private List<Camera.Size> mSupportedPreviewSizes;
     private List<Camera.Size> mSupportedPictureSizes;
     private int mOrientation = 0;
+    private CameraHandlerThread previewCallback;
 
     public CameraPreviewSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -92,6 +93,7 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
         } catch (IOException exception) {
             Log.d(LOG_TAG, "Error setting camera preview: " + exception.getMessage());
         }
+        Log.d(LOG_TAG, "surfaceCreated");
     }
 
     @Override
@@ -119,7 +121,8 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
             // Take care of events such as rotation
             fixOrientation(parameters);
             // Set some camera parameters
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+            //parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+            //parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
             parameters.setPreviewSize(mPreviewSize.width, mPreviewSize.height);
             parameters.setPictureSize(mPictureSize.width, mPictureSize.height);
 
@@ -132,6 +135,7 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
         } catch (Exception exception) {
             Log.d(LOG_TAG, "Error starting camera preview: " + exception.getMessage());
         }
+        Log.d(LOG_TAG, "surfaceChanged");
     }
 
     @Override
@@ -146,6 +150,7 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
 
             mCamera = null;
         }
+        Log.d(LOG_TAG, "surfaceDestroyed");
     }
 
     // A method to take care of the events of mOrientation changes on deveice rotation
@@ -200,11 +205,10 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
             if (flashMode == Camera.Parameters.FLASH_MODE_OFF) {
                 // Enable Flash
                 parameters.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
-            } else if(flashMode == Camera.Parameters.FLASH_MODE_ON) {
+            } else if (flashMode == Camera.Parameters.FLASH_MODE_ON) {
                 // Disable Flash
                 parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-            }
-            else {
+            } else {
                 // Disable Flash
                 parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
             }
@@ -215,7 +219,6 @@ public class CameraPreviewSurfaceView extends SurfaceView implements SurfaceHold
     }
 
     public void setAutoFocusCallback(Camera.AutoFocusCallback autoFocusCallback) {
-        this.autoFocusCallback = autoFocusCallback;
         mCamera.autoFocus(autoFocusCallback);
     }
 }

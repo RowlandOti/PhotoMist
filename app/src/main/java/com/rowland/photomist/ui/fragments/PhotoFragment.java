@@ -149,7 +149,8 @@ public class PhotoFragment extends Fragment {
                     mCameraHandlerThread = new CameraHandlerThread(PhotoFragment.this);
                     mCameraHandlerThread.initializePhotoTaking();
                 }
-                mCamera.autoFocus(mCameraHandlerThread);
+                // Needs to be done on every click,since autofocus is a one time process
+                mPreviewSurface.setAutoFocusCallback(mCameraHandlerThread);
             }
         });
     }
@@ -157,8 +158,8 @@ public class PhotoFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // ToDo: In future include feature for switching cameras
-        mCameraCurrentlyLocked = defaultBackFacingCameraId;
+        // Resume to selected camera
+        mCameraCurrentlyLocked = defaultFrontFacingCameraId;
         // Open the default back facing camera.
         mCamera = Camera.open(mCameraCurrentlyLocked);
         // Set the camera to use

@@ -25,9 +25,8 @@ public class CameraHandlerThread extends HandlerThread implements Camera.AutoFoc
 
     // Actions thread will handle
     private static final int TAKE_PHOTO = 0;
-    private static final int PREVIEW_PHOTO = 1;
     // The threading identifier
-    private static String THREAD_TAG = "CameraHandlerThread";
+    private static String THREAD_TAG = CameraHandlerThread.class.getSimpleName();
     // Class logging Identifier
     private final String LOG_TAG = CameraHandlerThread.class.getSimpleName();
     // Soft reference
@@ -40,7 +39,6 @@ public class CameraHandlerThread extends HandlerThread implements Camera.AutoFoc
         // This is a call to begin the thread
         start();
         mWeakReferenceCameraPreviewFragment = new WeakReference<>(photoFragment);
-        mWeakReferenceCameraPreviewFragment.get().getPreviewSurface().setAutoFocusCallback(this);
         mHandler = new Handler(getLooper());
     }
 
@@ -68,12 +66,10 @@ public class CameraHandlerThread extends HandlerThread implements Camera.AutoFoc
                                 }
                             });
                         }
-
                     });
                 }
                 return true;
             }
-
         });
     }
 
