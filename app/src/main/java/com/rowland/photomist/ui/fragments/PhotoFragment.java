@@ -2,6 +2,9 @@ package com.rowland.photomist.ui.fragments;
 
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.rowland.photomist.R;
 import com.rowland.photomist.camera.CameraHandlerThread;
@@ -46,6 +50,9 @@ public class PhotoFragment extends Fragment {
     // RadioGroup for settings
     @Bind(R.id.photo_settings_group)
     RadioGroup mSettingsRadioGroup;
+    // TextView for the timer
+    @Bind(R.id.camera_timer_textview)
+    TextView mTimerTextView;
 
     // A callback interface that all containing activities implement
     public interface PhotoTakeCompleteCallBack {
@@ -145,12 +152,40 @@ public class PhotoFragment extends Fragment {
         mTakePhotoIImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                long DELAY_TIME = 5000;
                 if (mCameraHandlerThread == null) {
                     mCameraHandlerThread = new CameraHandlerThread(PhotoFragment.this);
                     mCameraHandlerThread.initializePhotoTaking();
                 }
-                // Needs to be done on every click,since autofocus is a one time process
-                mPreviewSurface.setAutoFocusCallback(mCameraHandlerThread);
+
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        // Needs to be done on every click,since autofocus is a one time process
+                        mPreviewSurface.setAutoFocusCallback(mCameraHandlerThread);
+                    }
+                }, DELAY_TIME); //<-5 second delay
+
+                new CountDownTimer(DELAY_TIME, 1000) {
+                    public void onTick(long millisUntilFinished) {
+                        mTimerTextView.setText("" + millisUntilFinished / 1000);
+                    }
+
+                    public void onFinish() {
+                        mTimerTextView.setText(" ");
+                    }
+                }.start();
+            }
+        });
+    }
+
+    private void updateTimer() {
+        final long startTime = System.currentTimeMillis();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mTimerTextView.setText("" + ((System.currentTimeMillis() - startTime) / 1000));
             }
         });
     }
@@ -159,7 +194,7 @@ public class PhotoFragment extends Fragment {
     public void onResume() {
         super.onResume();
         // Resume to selected camera
-        mCameraCurrentlyLocked = defaultFrontFacingCameraId;
+        mCameraCurrentlyLocked = defaultBackFacingCameraId;
         // Open the default back facing camera.
         mCamera = Camera.open(mCameraCurrentlyLocked);
         // Set the camera to use

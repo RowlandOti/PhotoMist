@@ -16,11 +16,14 @@
         android:layout_height="@dimen/barcode_crop_height"
         android:layout_centerInParent="true">
 
-        <ImageView
-            android:id="@+id/scan_frame_result_image"
+        <TextView
+            android:textColor="@color/apptheme_white"
+            android:textSize="30dp"
+            android:gravity="center"
+            android:id="@+id/camera_timer_textview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitXY" />
+            tools:text="5" />
 
     </LinearLayout>
 
