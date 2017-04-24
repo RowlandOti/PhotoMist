@@ -147,8 +147,9 @@ public class PhotoFragment extends Fragment {
             public void onClick(View v) {
                 if (mCameraHandlerThread == null) {
                     mCameraHandlerThread = new CameraHandlerThread(PhotoFragment.this);
+                    mCameraHandlerThread.initializePhotoTaking();
                 }
-                mCameraHandlerThread.initializePhotoTaking();
+                mCamera.autoFocus(mCameraHandlerThread);
             }
         });
     }
@@ -171,8 +172,7 @@ public class PhotoFragment extends Fragment {
         // The Camera object is a shared resource, release it
         if (mCamera != null) {
             mPreviewSurface.setCamera(null);
-            mCamera.autoFocus(null);
-            mCamera.setPreviewCallback(null);
+            mCamera.cancelAutoFocus();
             mCamera.release();
             mCamera = null;
         }
